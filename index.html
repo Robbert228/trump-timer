@@ -11,8 +11,8 @@
     .card{width:min(760px,94%);padding:32px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));box-shadow:0 8px 30px rgba(2,6,23,0.6)}
     h1{margin:0 0 6px;font-size:20px}
     p.sub{margin:0 0 20px;color:var(--muted)}
-    .count{display:flex;gap:12px;flex-wrap:wrap}
-    .unit{background:var(--card);padding:18px;border-radius:12px;min-width:120px;text-align:center}
+    .count-row{display:flex;gap:12px;justify-content:space-between;flex-wrap:nowrap;margin-bottom:12px}
+    .unit{flex:1;background:var(--card);padding:18px;border-radius:12px;text-align:center;}
     .num{font-size:34px;font-weight:700;letter-spacing: -0.02em}
     .lbl{margin-top:6px;color:var(--muted);font-size:13px}
     footer{margin-top:18px;color:var(--muted);font-size:13px}
@@ -22,13 +22,20 @@
 <body>
   <div class="card">
     <h1>Таймер до кінця терміну президента США</h1>
-    <p class="sub">Цей злічильник відраховує до інавгурації 20 січня 2029 о 12:00 (US Eastern Time). Таймер працює у вашому локальному часовому поясі.</p>
+    <p class="sub">Цей лічильник відраховує до інавгурації 20 січня 2029 о 12:00 (US Eastern Time). Таймер працює у вашому локальному часовому поясі.</p>
 
-    <div id="count" class="count" aria-live="polite">
-      <div class="unit"><div id="days" class="num">—</div><div class="lbl">Днів</div></div>
-      <div class="unit"><div id="hours" class="num">—</div><div class="lbl">Годин</div></div>
-      <div class="unit"><div id="minutes" class="num">—</div><div class="lbl">Хвилин</div></div>
-      <div class="unit"><div id="seconds" class="num">—</div><div class="lbl">Секунд</div></div>
+    <div id="count">
+      <div class="count-row" aria-live="polite">
+        <div class="unit"><div id="years" class="num">—</div><div class="lbl">Років</div></div>
+        <div class="unit"><div id="months" class="num">—</div><div class="lbl">Місяців</div></div>
+        <div class="unit"><div id="weeks" class="num">—</div><div class="lbl">Тижнів</div></div>
+      </div>
+      <div class="count-row" aria-live="polite">
+        <div class="unit"><div id="days" class="num">—</div><div class="lbl">Днів</div></div>
+        <div class="unit"><div id="hours" class="num">—</div><div class="lbl">Годин</div></div>
+        <div class="unit"><div id="minutes" class="num">—</div><div class="lbl">Хвилин</div></div>
+        <div class="unit"><div id="seconds" class="num">—</div><div class="lbl">Секунд</div></div>
+      </div>
     </div>
 
     <footer>
@@ -38,11 +45,13 @@
   </div>
 
   <script>
-    // Target: 20 Jan 2029 12:00:00 US Eastern Time (UTC-05:00)
     const targetISO = "2029-01-20T12:00:00-05:00";
     const target = new Date(targetISO);
 
     const el = {
+      years: document.getElementById("years"),
+      months: document.getElementById("months"),
+      weeks: document.getElementById("weeks"),
       days: document.getElementById("days"),
       hours: document.getElementById("hours"),
       minutes: document.getElementById("minutes"),
@@ -55,19 +64,26 @@
       const now = new Date();
       let diff = target - now;
       if(diff <= 0){
-        el.days.textContent = "0";
-        el.hours.textContent = "00";
-        el.minutes.textContent = "00";
-        el.seconds.textContent = "00";
+        el.years.textContent = el.months.textContent = el.weeks.textContent = el.days.textContent = "0";
+        el.hours.textContent = el.minutes.textContent = el.seconds.textContent = "00";
         return;
       }
 
-      const sec = Math.floor(diff / 1000);
-      const days = Math.floor(sec / 86400);
-      const hours = Math.floor((sec % 86400) / 3600);
-      const minutes = Math.floor((sec % 3600) / 60);
-      const seconds = sec % 60;
+      let totalSec = Math.floor(diff/1000);
+      let totalDays = Math.floor(totalSec / 86400);
 
+      let years = Math.floor(totalDays / 365);
+      let months = Math.floor(totalDays / 30);
+      let weeks = Math.floor(totalDays / 7);
+      let days = totalDays;
+
+      const hours = Math.floor((totalSec % 86400)/3600);
+      const minutes = Math.floor((totalSec % 3600)/60);
+      const seconds = totalSec % 60;
+
+      el.years.textContent = String(years);
+      el.months.textContent = String(months);
+      el.weeks.textContent = String(weeks);
       el.days.textContent = String(days);
       el.hours.textContent = pad(hours);
       el.minutes.textContent = pad(minutes);
