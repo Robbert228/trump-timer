@@ -15,9 +15,6 @@
     .unit{background:var(--card);padding:18px;border-radius:12px;min-width:120px;text-align:center}
     .num{font-size:34px;font-weight:700;letter-spacing: -0.02em}
     .lbl{margin-top:6px;color:var(--muted);font-size:13px}
-    .controls{display:flex;gap:8px;align-items:center;margin-top:18px}
-    button{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:inherit;cursor:pointer}
-    button.primary{background:var(--accent);border:0;color:#0b1020}
     footer{margin-top:18px;color:var(--muted);font-size:13px}
     .small{font-size:12px;color:var(--muted)}
   </style>
@@ -32,12 +29,6 @@
       <div class="unit"><div id="hours" class="num">—</div><div class="lbl">Годин</div></div>
       <div class="unit"><div id="minutes" class="num">—</div><div class="lbl">Хвилин</div></div>
       <div class="unit"><div id="seconds" class="num">—</div><div class="lbl">Секунд</div></div>
-    </div>
-
-    <div class="controls">
-      <button id="copyBtn">Скопіювати HTML</button>
-      <button id="openNew" class="primary">Відкрити в новому вікні</button>
-      <label class="small" style="margin-left:auto">Оновлення: <select id="interval" title="Оновлення таймера"><option value="1000">1c</option><option value="10000">10c</option><option value="60000">1хв</option></select></label>
     </div>
 
     <footer>
@@ -89,25 +80,6 @@
     }
 
     requestAnimationFrame(loop);
-
-    document.getElementById("openNew").addEventListener("click", ()=>{
-      const newWin = window.open("", "_blank");
-      newWin.document.write(document.documentElement.outerHTML);
-      newWin.document.close();
-    });
-
-    document.getElementById("copyBtn").addEventListener("click", async ()=>{
-      try{
-        await navigator.clipboard.writeText(`<!doctype html>
-${document.documentElement.outerHTML}`);
-        const t = document.getElementById("copyBtn");
-        const old = t.textContent;
-        t.textContent = "Скопійовано!";
-        setTimeout(()=> t.textContent = old,1500);
-      }catch(e){
-        alert("Не вдалось скопіювати автоматично. Скопіюй вручну з цієї сторінки.");
-      }
-    });
   </script>
 </body>
 </html>
